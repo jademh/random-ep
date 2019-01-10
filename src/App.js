@@ -41,19 +41,32 @@ class App extends Component {
     const randomEpisode = Math.floor(Math.random() * epsInRandomSeason) + 1;
     const fetchPath = `https://api.themoviedb.org/3/tv/${this.state.showId}/season/${randomSeason}/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
     fetch(fetchPath)
+    .then(response => {
+      if(response.status === 200) {
+        return response;
+      }
+      else {
+        console.error('404 - picking another episode...')
+        throw new Error('Request Failed');
+      }
+    })
     .then(response => response.json())
     .then(data => {
       if(data.season_number !== 0) {
         this.setState({ randomEpisodeDetails: data, loaded: true});
       }
       else {
-        this.pickRandomEp();
+        throw new Error('Season Zero Error');
       }
+    })
+    .catch(err => {
+      // Pick another random episode
+      this.pickRandomEp();
     });
   }
 
   changeShow(evt) {
-    this.setState({showId: evt.target.value}, this.fetchData);
+    this.setState({showId: parseInt(evt.target.value)}, this.fetchData);
   }
 
   componentDidMount() {
@@ -68,7 +81,7 @@ class App extends Component {
           <ul className="showPicker">
             {shows.map((show) => {
               return (
-                <button key={show.id} value={show.id} disabled={this.state.showId == show.id} onClick={this.changeShow}>{show.name}</button>
+                <button key={show.id} value={show.id} disabled={this.state.showId === show.id} onClick={this.changeShow}>{show.name}</button>
               )
             })}
           </ul>
