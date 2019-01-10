@@ -76,11 +76,12 @@ class App extends Component {
               <span className="showDetails_season">Season {this.state.randomEpisodeDetails.season_number}</span>
               <span className="showDetails_episode"> Episode {this.state.randomEpisodeDetails.episode_number}</span>
             </h2>
+            <button className="refreshEp" onClick={this.pickRandomEp}>Give me another ep</button>
             <div className="showDetails_overview">
               <p>{this.state.randomEpisodeDetails.overview}</p>
             </div>
           </div>
-          <button className="refreshEp" onClick={this.pickRandomEp}>Give me another ep</button>
+
         </div>
       );
     }
