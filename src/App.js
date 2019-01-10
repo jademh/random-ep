@@ -51,7 +51,7 @@ class App extends Component {
   }
 
   changeShow(evt) {
-    this.setState({showId: evt.target.value, loaded: false}, this.fetchData);
+    this.setState({showId: evt.target.value}, this.fetchData);
   }
 
   componentDidMount() {
@@ -63,7 +63,7 @@ class App extends Component {
     if(this.state.loaded) {
       return (
         <div className="App">
-          <select className="showPicker" value={this.state.showId} onChange={this.changeShow}>
+          <select className="showPicker" value={this.state.showId} onChange={this.changeShow} onBlur={this.changeShow}>
             {shows.map((show) => {
               return (
                 <option key={show.id} value={show.id}>{show.name}</option>
