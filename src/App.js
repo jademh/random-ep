@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import shows from './shows';
 const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
 class App extends Component {
@@ -7,12 +8,12 @@ class App extends Component {
     super(props);
     this.fetchData = this.fetchData.bind(this);
     this.pickRandomEp = this.pickRandomEp.bind(this);
+    this.changeShow = this.changeShow.bind(this);
   }
 
   state = {
-    showId: 4586,
-    //showId: 105,
     loaded: false,
+    showId: 0,
     seasons: [],
     seasonCount: 0,
     episodeCount: 0,
@@ -40,26 +41,46 @@ class App extends Component {
     fetch(fetchPath)
     .then(response => response.json())
     .then(data => {
-      this.setState({ randomEpisodeDetails: data, loaded: true});
+      if(data.season_number !== 0) {
+        this.setState({ randomEpisodeDetails: data, loaded: true});
+      }
+      else {
+        this.pickRandomEp();
+      }
     });
   }
 
-  componentDidMount() {
-    this.fetchData();
+  changeShow(evt) {
+    this.setState({showId: evt.target.value}, this.fetchData);
   }
 
+  componentDidMount() {
+    const randomShow = Math.floor(Math.random() * shows.length);
+    this.setState({showId: shows[randomShow].id}, this.fetchData)
+  }
 
   render() {
     if(this.state.loaded) {
       return (
         <div className="App">
-          <div>
-            <span>Season {this.state.randomEpisodeDetails.season_number}</span>
-            <span> Episode {this.state.randomEpisodeDetails.episode_number}</span>
+          <select className="showPicker" value={this.state.showId} onChange={this.changeShow}>
+            {shows.map((show) => {
+              return (
+                <option key={show.id} value={show.id}>{show.name}</option>
+              )
+            })}
+          </select>
+          <div className="showDetails">
+            <h1 className="showDetails_name">{this.state.randomEpisodeDetails.name}</h1>
+            <h2 className="showDetails_season-ep">
+              <span className="showDetails_season">Season {this.state.randomEpisodeDetails.season_number}</span>
+              <span className="showDetails_episode"> Episode {this.state.randomEpisodeDetails.episode_number}</span>
+            </h2>
+            <div className="showDetails_overview">
+              <p>{this.state.randomEpisodeDetails.overview}</p>
+            </div>
           </div>
-          <div>{this.state.randomEpisodeDetails.name}</div>
-          <div>{this.state.randomEpisodeDetails.overview}</div>
-          <button onClick={this.pickRandomEp}>Give me another</button>
+          <button className="refreshEp" onClick={this.pickRandomEp}>Give me another ep</button>
         </div>
       );
     }
