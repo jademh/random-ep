@@ -51,7 +51,7 @@ class App extends Component {
   }
 
   changeShow(evt) {
-    this.setState({showId: evt.target.value}, this.fetchData);
+    this.setState({showId: evt.target.value, loaded: false}, this.fetchData);
   }
 
   componentDidMount() {
@@ -86,7 +86,7 @@ class App extends Component {
       );
     }
     return(
-      <div>... nothing yet</div>
+      <div className="loading"><span>... Loading</span></div>
     )
   }
 }
