@@ -14,6 +14,7 @@ class App extends Component {
   state = {
     loaded: false,
     showId: 0,
+    showName: '',
     seasons: [],
     seasonCount: 0,
     episodeCount: 0,
@@ -27,6 +28,7 @@ class App extends Component {
     .then(data => {
       this.setState({
         seasons: data.seasons,
+        showName: data.name,
         seasonCount: data.seasons.length,
         episodeCount: data.number_of_episodes,
       }, this.pickRandomEp);
@@ -63,19 +65,18 @@ class App extends Component {
     if(this.state.loaded) {
       return (
         <div className="App">
-          <select className="showPicker" value={this.state.showId} onChange={this.changeShow} onBlur={this.changeShow}>
+          <ul className="showPicker">
             {shows.map((show) => {
               return (
-                <option key={show.id} value={show.id}>{show.name}</option>
+                <button key={show.id} value={show.id} disabled={this.state.showId == show.id} onClick={this.changeShow}>{show.name}</button>
               )
             })}
-          </select>
+          </ul>
           <div className="showDetails">
-            <h1 className="showDetails_name">{this.state.randomEpisodeDetails.name}</h1>
-            <h2 className="showDetails_season-ep">
-              <span className="showDetails_season">Season {this.state.randomEpisodeDetails.season_number}</span>
-              <span className="showDetails_episode"> Episode {this.state.randomEpisodeDetails.episode_number}</span>
-            </h2>
+            <h1>{this.state.showName}</h1>
+            <h2 className="showDetails_name">{this.state.randomEpisodeDetails.name}</h2>
+            <h3 className="showDetails_season">Season {this.state.randomEpisodeDetails.season_number}</h3>
+            <h4 className="showDetails_episode">Episode {this.state.randomEpisodeDetails.episode_number}</h4>
             <button className="refreshEp" onClick={this.pickRandomEp}>Give me another ep</button>
             <div className="showDetails_overview">
               <p>{this.state.randomEpisodeDetails.overview}</p>
