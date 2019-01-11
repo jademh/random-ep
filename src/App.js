@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import shows from './shows';
+import { generateRandomInt, chooseRandomArrayItem } from './helpers';
+
 const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
 class App extends Component {
@@ -13,44 +15,56 @@ class App extends Component {
 
   state = {
     loaded: false,
+    error: '',
     showId: 0,
     showName: '',
     seasons: [],
-    seasonCount: 0,
-    episodeCount: 0,
     randomEpisodeDetails: null,
   }
 
   fetchData() {
-    const fetchPath = `https://api.themoviedb.org/3/tv/${this.state.showId}?api_key=${API_KEY}&language=en-US`;
+    const { showId } = this.state;
+    const fetchPath = `https://api.themoviedb.org/3/tv/${showId}?api_key=${API_KEY}&language=en-US`;
     fetch(fetchPath)
-    .then(response => response.json())
+    .then(response => {
+      if(response.ok) {
+        return response.json();
+      }
+      if(response.status === 401) {
+        throw new Error('UNAUTHORISED');
+      }
+      throw new Error('Request Failed');
+    })
     .then(data => {
       this.setState({
         seasons: data.seasons,
         showName: data.name,
-        seasonCount: data.seasons.length,
-        episodeCount: data.number_of_episodes,
       }, this.pickRandomEp);
+    })
+    .catch(err => {
+      if(err.message === 'UNAUTHORISED') {
+        this.setState({ error: "An error has occured, please try again later... " });
+      }
+      this.setState({ error: "An error has occured, please refresh the page... " })
     });
   }
 
   pickRandomEp() {
-    const randomSeason = Math.floor(Math.random() * (this.state.seasonCount));
-    const epsInRandomSeason = this.state.seasons[randomSeason].episode_count;
-    const randomEpisode = Math.floor(Math.random() * epsInRandomSeason) + 1;
-    const fetchPath = `https://api.themoviedb.org/3/tv/${this.state.showId}/season/${randomSeason}/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
+    const { showId, seasons} = this.state;
+    const randomSeason = chooseRandomArrayItem(seasons);
+    console.log(randomSeason);
+    const randomEpisode = generateRandomInt(1, randomSeason.episode_count);
+    const fetchPath = `https://api.themoviedb.org/3/tv/${showId}/season/${randomSeason.season_number}/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
     fetch(fetchPath)
     .then(response => {
-      if(response.status === 200) {
-        return response;
+      if(response.ok) {
+        return response.json();
       }
-      else {
-        console.error('404 - picking another episode...')
-        throw new Error('Request Failed');
+      if(response.status === 401) {
+        throw new Error('UNAUTHORISED');
       }
+      throw new Error('Request Failed');
     })
-    .then(response => response.json())
     .then(data => {
       if(data.season_number !== 0) {
         this.setState({ randomEpisodeDetails: data, loaded: true});
@@ -60,8 +74,13 @@ class App extends Component {
       }
     })
     .catch(err => {
-      // Pick another random episode
-      this.pickRandomEp();
+      if(err.message === 'UNAUTHORISED') {
+        this.setState({ error: "An error has occured, please try again later... " })
+      }
+      else {
+        // Pick another random episode
+        this.pickRandomEp();
+      }
     });
   }
 
@@ -70,8 +89,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const randomShow = Math.floor(Math.random() * shows.length);
-    this.setState({showId: shows[randomShow].id}, this.fetchData)
+    const randomShow = chooseRandomArrayItem(shows);
+    this.setState({
+      showId: randomShow.id
+    }, this.fetchData);
   }
 
   render() {
@@ -95,9 +116,13 @@ class App extends Component {
               <p>{this.state.randomEpisodeDetails.overview}</p>
             </div>
           </div>
-
         </div>
       );
+    }
+    if(this.state.error !== '') {
+      return (
+        <div className="loading"><span>{this.state.error}</span></div>
+      )
     }
     return(
       <div className="loading"><span>... Loading</span></div>
