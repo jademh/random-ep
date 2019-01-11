@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import ShowPicker from './components/ShowPicker';
+import ShowDetails from './components/ShowDetails';
 import shows from './shows';
 import { generateRandomInt, chooseRandomArrayItem } from './helpers';
 
@@ -11,9 +12,11 @@ class App extends Component {
     this.fetchData = this.fetchData.bind(this);
     this.pickRandomEp = this.pickRandomEp.bind(this);
     this.changeShow = this.changeShow.bind(this);
+    this.pickShow = this.pickShow.bind(this);
   }
 
   state = {
+    showChosen: false,
     loaded: false,
     error: '',
     showId: 0,
@@ -39,6 +42,7 @@ class App extends Component {
       this.setState({
         seasons: data.seasons,
         showName: data.name,
+        showChosen: true,
       }, this.pickRandomEp);
     })
     .catch(err => {
@@ -52,7 +56,6 @@ class App extends Component {
   pickRandomEp() {
     const { showId, seasons} = this.state;
     const randomSeason = chooseRandomArrayItem(seasons);
-    console.log(randomSeason);
     const randomEpisode = generateRandomInt(1, randomSeason.episode_count);
     const fetchPath = `https://api.themoviedb.org/3/tv/${showId}/season/${randomSeason.season_number}/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
     fetch(fetchPath)
@@ -84,48 +87,35 @@ class App extends Component {
     });
   }
 
-  changeShow(evt) {
-    this.setState({showId: parseInt(evt.target.value)}, this.fetchData);
+  changeShow(showId) {
+    this.setState({showId}, this.fetchData);
   }
 
-  componentDidMount() {
-    const randomShow = chooseRandomArrayItem(shows);
-    this.setState({
-      showId: randomShow.id
-    }, this.fetchData);
+  pickShow() {
+    this.setState({showChosen: false});
   }
 
   render() {
-    if(this.state.loaded) {
-      return (
-        <div className="App">
-          <ul className="showPicker">
-            {shows.map((show) => {
-              return (
-                <button key={show.id} value={show.id} disabled={this.state.showId === show.id} onClick={this.changeShow}>{show.name}</button>
-              )
-            })}
-          </ul>
-          <div className="showDetails">
-            <h1>{this.state.showName}</h1>
-            <h2 className="showDetails_name">{this.state.randomEpisodeDetails.name}</h2>
-            <h3 className="showDetails_season">Season {this.state.randomEpisodeDetails.season_number}</h3>
-            <h4 className="showDetails_episode">Episode {this.state.randomEpisodeDetails.episode_number}</h4>
-            <button className="refreshEp" onClick={this.pickRandomEp}>Give me another ep</button>
-            <div className="showDetails_overview">
-              <p>{this.state.randomEpisodeDetails.overview}</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
     if(this.state.error !== '') {
       return (
         <div className="loading"><span>{this.state.error}</span></div>
       )
     }
     return(
-      <div className="loading"><span>... Loading</span></div>
+      <div className="App">
+
+          <ShowPicker active={!this.state.showChosen} shows={shows} onChangeShow={this.changeShow} />
+          {this.state.loaded &&
+            <div className="results">
+              <div className="toolbar">
+                <button onClick={this.pickShow}>Pick a different show 📺</button>
+                <button onClick={this.pickRandomEp}>Pick random episode ✨</button>
+              </div>
+              <ShowDetails showName={this.state.showName} episodeDetails={this.state.randomEpisodeDetails} />
+            </div>
+          }
+          
+        </div>
     )
   }
 }

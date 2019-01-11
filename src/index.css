@@ -13,14 +13,30 @@ code {
     monospace;
 }
 
-.App {
-  text-align: center;
-  max-width: 500px;
-  padding: 0 15px;
-  margin: 50px auto;
+.showPicker {
+  width: 100%;
+  height: 100vh;
+  background: #dbdbdb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  transition: top 600ms ease-in-out;
+  top: -100vh;
 }
 
-.showPicker {
+.showPicker.st-active {
+  top: 0;
+}
+
+.showPicker_panel,
+.results {
+  max-width: 500px;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+.showPicker_list {
   display: flex;
   flex-wrap: wrap;
   margin: 0;
@@ -28,14 +44,21 @@ code {
   justify-content: center;
 }
 
-.showPicker button {
+.showPicker_list button {
   font-size: 16px;
   border: 0;
   margin: 0 5px 5px 0;
 }
 
-.refreshEp {
+.toolbar {
+  display: flex;
+  margin: 10px -5px 0 -5px;
+}
+.toolbar button {
   font-size: 20px;
+  margin: 0 5px;
+  flex-grow: 1;
+  border-radius: 5px;
 }
 
 
@@ -61,7 +84,7 @@ button {
 }
 
 button:hover {
-  background: red;
+  background:#ea529e;
 }
 
 button:disabled {
