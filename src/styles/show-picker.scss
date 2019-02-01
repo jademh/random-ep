@@ -1,0 +1,36 @@
+@import '_base';
+
+.showPicker {
+  width: 100%;
+  height: 100vh;
+  background: $color-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  transition: top 600ms ease-in-out;
+  top: -100vh;
+
+  &.st-active {
+    top: 0;
+  }
+
+  &_list {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+
+    button {
+      margin: 5px;
+    }
+  }
+}
+
+.showPicker_panel,
+.results {
+  max-width: 500px;
+  padding: 0 20px;
+  margin: 0 auto;
+}

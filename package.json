@@ -21,5 +21,13 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "eslint-plugin-prettier": "^3.0.1",
+    "node-sass": "^4.11.0",
+    "prettier": "1.16.1",
+    "prettier-stylelint": "^0.4.2",
+    "stylelint": "^9.10.1",
+    "stylelint-config-standard": "^18.2.0"
+  }
 }

@@ -23,100 +23,126 @@ class App extends Component {
     showName: '',
     seasons: [],
     randomEpisodeDetails: null,
-  }
+  };
 
   fetchData() {
     const { showId } = this.state;
     const fetchPath = `https://api.themoviedb.org/3/tv/${showId}?api_key=${API_KEY}&language=en-US`;
     fetch(fetchPath)
-    .then(response => {
-      if(response.ok) {
-        return response.json();
-      }
-      if(response.status === 401) {
-        throw new Error('UNAUTHORISED');
-      }
-      throw new Error('Request Failed');
-    })
-    .then(data => {
-      this.setState({
-        seasons: data.seasons,
-        showName: data.name,
-        showChosen: true,
-      }, this.pickRandomEp);
-    })
-    .catch(err => {
-      if(err.message === 'UNAUTHORISED') {
-        this.setState({ error: "An error has occured, please try again later... " });
-      }
-      this.setState({ error: "An error has occured, please refresh the page... " })
-    });
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        if (response.status === 401) {
+          throw new Error('UNAUTHORISED');
+        }
+        throw new Error('Request Failed');
+      })
+      .then(data => {
+        this.setState(
+          {
+            seasons: data.seasons,
+            showName: data.name,
+            showChosen: true,
+          },
+          this.pickRandomEp
+        );
+      })
+      .catch(err => {
+        if (err.message === 'UNAUTHORISED') {
+          this.setState({
+            error: 'An error has occured, please try again later... ',
+          });
+        }
+        this.setState({
+          error: 'An error has occured, please refresh the page... ',
+        });
+      });
   }
 
   pickRandomEp() {
-    const { showId, seasons} = this.state;
+    const { showId, seasons } = this.state;
     const randomSeason = chooseRandomArrayItem(seasons);
     const randomEpisode = generateRandomInt(1, randomSeason.episode_count);
-    const fetchPath = `https://api.themoviedb.org/3/tv/${showId}/season/${randomSeason.season_number}/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
+    const fetchPath = `https://api.themoviedb.org/3/tv/${showId}/season/${
+      randomSeason.season_number
+    }/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
     fetch(fetchPath)
-    .then(response => {
-      if(response.ok) {
-        return response.json();
-      }
-      if(response.status === 401) {
-        throw new Error('UNAUTHORISED');
-      }
-      throw new Error('Request Failed');
-    })
-    .then(data => {
-      if(data.season_number !== 0) {
-        this.setState({ randomEpisodeDetails: data, loaded: true});
-      }
-      else {
-        throw new Error('Season Zero Error');
-      }
-    })
-    .catch(err => {
-      if(err.message === 'UNAUTHORISED') {
-        this.setState({ error: "An error has occured, please try again later... " })
-      }
-      else {
-        // Pick another random episode
-        this.pickRandomEp();
-      }
-    });
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        if (response.status === 401) {
+          throw new Error('UNAUTHORISED');
+        }
+        throw new Error('Request Failed');
+      })
+      .then(data => {
+        if (data.season_number !== 0) {
+          this.setState({ randomEpisodeDetails: data, loaded: true });
+        } else {
+          throw new Error('Season Zero Error');
+        }
+      })
+      .catch(err => {
+        if (err.message === 'UNAUTHORISED') {
+          this.setState({
+            error: 'An error has occured, please try again later... ',
+          });
+        } else {
+          // Pick another random episode
+          this.pickRandomEp();
+        }
+      });
   }
 
   changeShow(showId) {
-    this.setState({showId}, this.fetchData);
+    this.setState({ showId }, this.fetchData);
   }
 
   pickShow() {
-    this.setState({showChosen: false});
+    this.setState({ showChosen: false });
   }
 
   render() {
-    if(this.state.error !== '') {
+    if (this.state.error !== '') {
       return (
-        <div className="loading"><span>{this.state.error}</span></div>
-      )
-    }
-    return(
-      <div className="App">
-
-          <ShowPicker active={!this.state.showChosen} shows={shows} onChangeShow={this.changeShow} />
-          {this.state.loaded &&
-            <div className="results">
-              <div className="toolbar">
-                <button onClick={this.pickShow}>Pick a different show 📺</button>
-                <button onClick={this.pickRandomEp}>Pick random episode ✨</button>
-              </div>
-              <ShowDetails showName={this.state.showName} episodeDetails={this.state.randomEpisodeDetails} />
-            </div>
-          }
-          
+        <div className="loading">
+          <span>{this.state.error}</span>
         </div>
-    )
+      );
+    }
+    return (
+      <div className="App">
+        <ShowPicker
+          active={!this.state.showChosen}
+          shows={shows}
+          onChangeShow={this.changeShow}
+        />
+        {this.state.loaded && (
+          <div className="results">
+            <div className="toolbar">
+              <button onClick={this.pickShow}>
+                <span>Pick a different show </span>
+                <span role="img" aria-label="TV emoji">
+                  📺
+                </span>
+              </button>
+              <button onClick={this.pickRandomEp}>
+                <span>Pick random episode </span>
+                <span role="img" aria-label="sparkle emoji">
+                  ✨
+                </span>
+              </button>
+            </div>
+            <ShowDetails
+              showName={this.state.showName}
+              episodeDetails={this.state.randomEpisodeDetails}
+            />
+          </div>
+        )}
+      </div>
+    );
   }
 }
 

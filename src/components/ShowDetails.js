@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 export default function ShowDetails(props) {
-  const { showName, episodeDetails } =  props;
+  const { showName, episodeDetails } = props;
   const { name, season_number, episode_number, overview } = episodeDetails;
   return (
     <div className="showDetails">
@@ -13,5 +13,5 @@ export default function ShowDetails(props) {
         <p>{overview}</p>
       </div>
     </div>
-  )
+  );
 }
