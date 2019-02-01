@@ -10,6 +10,7 @@
   position: absolute;
   transition: top 600ms ease-in-out;
   top: -100vh;
+  z-index: 3;
 
   &.st-active {
     top: 0;
@@ -18,7 +19,7 @@
   &_list {
     display: flex;
     flex-wrap: wrap;
-    margin: 0;
+    margin: 50px 0 0 0;
     padding: 0;
     justify-content: center;
 
@@ -28,9 +29,8 @@
   }
 }
 
-.showPicker_panel,
-.results {
-  max-width: 500px;
+.showPicker_panel {
+  max-width: $content-width;
   padding: 0 20px;
   margin: 0 auto;
 }

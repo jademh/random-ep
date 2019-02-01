@@ -8,7 +8,6 @@ export default function ShowPicker(props) {
     <section className={`showPicker ${active ? 'st-active' : ''}`}>
       <div className="showPicker_panel">
         <h1>Random Episode</h1>
-        <h2>Pick a show...</h2>
         <div className="showPicker_list">
           {shows.map(show => {
             return (

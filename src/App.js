@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ShowPicker from './components/ShowPicker';
 import ShowDetails from './components/ShowDetails';
+import Credit from './components/Credit';
 import shows from './shows';
 import { generateRandomInt, chooseRandomArrayItem } from './helpers';
 
@@ -141,6 +142,7 @@ class App extends Component {
             />
           </div>
         )}
+        <Credit />
       </div>
     );
   }

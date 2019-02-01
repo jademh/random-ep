@@ -69,6 +69,16 @@ h1 {
   font-size: 80px;
   line-height: 0.9em;
   letter-spacing: 0.3px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
 }
 
 input,
@@ -81,6 +91,10 @@ button {
 
 p {
   text-align: left;
+}
+
+abbr {
+  text-decoration: none;
 }
 
 button {
@@ -108,6 +122,7 @@ button:disabled {
 
   display: flex;
   margin: 10px -$button-spacing 0 -$button-spacing;
+  margin-top: 30px;
 
   button {
     margin: 0 $button-spacing;
@@ -121,4 +136,39 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.results {
+  max-width: $content-width;
+  height: calc(100vh - #{$footer-height});
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 20px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 50px;
+    margin-top: 50px;
+  }
+}
+
+.credit {
+  position: absolute;
+  background: $color-accent;
+  bottom: 0;
+  width: 100%;
+  height: $footer-height;
+  line-height: $footer-height;
+  color: white;
+  padding: 0 20px;
+  text-align: right;
+
+  a {
+    color: inherit;
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+    }
+  }
 }
