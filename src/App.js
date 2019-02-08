@@ -3,6 +3,7 @@ import ShowPicker from './components/ShowPicker';
 import ShowDetails from './components/ShowDetails';
 import Credit from './components/Credit';
 import shows from './shows';
+import trackEvent from './tracking';
 import { generateRandomInt, chooseRandomArrayItem } from './helpers';
 
 const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
@@ -100,13 +101,23 @@ export default function App() {
       {loaded && (
         <div className="results">
           <div className="toolbar">
-            <button onClick={() => setShowChosen(false)}>
+            <button
+              onClick={() => {
+                setShowChosen(false);
+                trackEvent('Button', 'click', 'Pick a different show');
+              }}
+            >
               <span>Pick a different show </span>
               <span role="img" aria-label="TV emoji">
                 📺
               </span>
             </button>
-            <button onClick={() => pickRandomEp()}>
+            <button
+              onClick={() => {
+                pickRandomEp();
+                trackEvent('Button', 'click', 'Pick random episode');
+              }}
+            >
               <span>Pick random episode </span>
               <span role="img" aria-label="sparkle emoji">
                 ✨

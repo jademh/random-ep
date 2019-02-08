@@ -1,5 +1,6 @@
 {
   "extends": ["react-app", "plugin:jsx-a11y/recommended"],
+  "globals": { "ga": true },
   "plugins": ["prettier", "jsx-a11y", "react-hooks"],
   "rules": {
     "prettier/prettier": "error",

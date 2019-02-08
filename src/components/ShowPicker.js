@@ -1,5 +1,6 @@
 import React from 'react';
 import { chooseRandomArrayItem } from '../helpers';
+import trackEvent from '../tracking';
 import '../styles/show-picker.scss';
 
 export default function ShowPicker(props) {
@@ -14,13 +15,22 @@ export default function ShowPicker(props) {
               <button
                 key={show.id}
                 value={show.id}
-                onClick={() => onChangeShow(show.id)}
+                onClick={() => {
+                  onChangeShow(show.id);
+                  trackEvent('Button', 'click', show.name);
+                }}
               >
                 {show.name}
               </button>
             );
           })}
-          <button onClick={() => onChangeShow(chooseRandomArrayItem(shows).id)}>
+          <button
+            onClick={() => {
+              const randomShow = chooseRandomArrayItem(shows);
+              onChangeShow(randomShow.id);
+              trackEvent('Button', 'click', `Surprise Me: ${randomShow.name}`);
+            }}
+          >
             <span role="img" aria-label="crystal ball emoji">
               🔮
             </span>
