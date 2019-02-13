@@ -56,7 +56,7 @@ h1 {
   margin: 20px 0;
   text-align: center;
 
-  @media only screen and (max-height: 568px) {
+  @media only screen and (max-height: $miniPhoneHeight) {
     font-size: 40px;
   }
 }
