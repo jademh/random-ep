@@ -92,6 +92,7 @@ export default function App() {
   };
 
   useEffect(() => {
+    updateVh();
     window.addEventListener('resize', updateVh);
     return () => {
       window.removeEventListener('resize', updateVh);
