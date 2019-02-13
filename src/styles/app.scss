@@ -7,48 +7,33 @@
 }
 
 @font-face {
-  font-family: 'Calibre';
-  src: url('../fonts/CalibreTest-Regular.woff') format('woff');
+  font-family: 'IBM Plex Mono';
+  src:
+    url('../fonts/IBMPlexMono-Regular-Latin1.woff') format('woff'),
+    url('../fonts/IBMPlexMono-Regular-Latin1.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Domaine';
-  src: url('../fonts/DomaineDisplayNarTest-Extrabold.woff') format('woff');
+  font-family: 'IBM Plex Sans Bold';
+  src:
+    url('../fonts/IBMPlexSans-Bold-Latin1.woff') format('woff'),
+    url('../fonts/IBMPlexSans-Bold-Latin1.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
-}
-
-@font-face {
-  font-family: 'CalibreBold';
-  src: url('../fonts/CalibreTest-Medium.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'CalibreItalic';
-  src: url('../fonts/CalibreTest-RegularItalic.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
-em {
-  font-family: 'CalibreItalic', sans-serif;
-  font-style: none;
-}
-
-strong {
-  font-family: 'CalibreBold', sans-serif;
-  font-style: none;
-  font-weight: normal;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Calibre', sans-serif;
+  font-family:
+    'IBM Plex Mono',
+ 'Menlo',
+ 'DejaVu Sans Mono',
+    'Bitstream Vera Sans Mono',
+ Courier,
+ monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -59,14 +44,13 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'CalibreBold', sans-serif;
+  font-family: 'IBM Plex Sans Bold', 'Helvetica Neue', Arial, sans-serif;
   font-weight: normal;
 }
 
 h1 {
-  font-family: 'Domaine', sans-serif;
   color: $color-accent;
-  font-size: 80px;
+  font-size: 60px;
   line-height: 0.9em;
   letter-spacing: 0.3px;
   margin: 20px 0;
@@ -85,7 +69,13 @@ input,
 textarea,
 select,
 button {
-  font-family: 'Calibre', sans-serif;
+  font-family:
+    'IBM Plex Mono',
+ 'Menlo',
+ 'DejaVu Sans Mono',
+    'Bitstream Vera Sans Mono',
+ Courier,
+ monospace;
   font-weight: normal;
 }
 
@@ -105,7 +95,7 @@ button {
   cursor: pointer;
   border: 0;
   font-weight: normal;
-  font-size: 20px;
+  font-size: 14px;
   border-radius: 5px;
 }
 
@@ -122,7 +112,6 @@ button:disabled {
 
   display: flex;
   margin: 10px -$button-spacing 0 -$button-spacing;
-  margin-top: 30px;
 
   button {
     margin: 0 $button-spacing;
@@ -140,10 +129,8 @@ button:disabled {
 
 .results {
   max-width: $content-width;
-  height: calc(100vh - #{$footer-height});
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 0 20px;
+  min-height: calc(100vh - #{$footer-height});
+  padding: 20px;
   margin: 0 auto;
 
   h1 {
@@ -153,13 +140,9 @@ button:disabled {
 }
 
 .credit {
-  position: absolute;
-  background: $color-accent;
-  bottom: 0;
-  width: 100%;
   height: $footer-height;
   line-height: $footer-height;
-  color: white;
+  color: $color-accent;
   padding: 0 20px;
   text-align: right;
 
