@@ -55,6 +55,10 @@ h1 {
   letter-spacing: 0.3px;
   margin: 20px 0;
   text-align: center;
+
+  @media only screen and (max-height: 568px) {
+    font-size: 40px;
+  }
 }
 
 h2 {
@@ -129,7 +133,12 @@ button:disabled {
 
 .results {
   max-width: $content-width;
-  min-height: calc(100vh - #{$footer-height});
+  min-height:
+    calc(
+      100vh - #{$footer-height}
+    ); /* Fallback for browsers that do not support Custom Properties */
+
+  min-height: calc((var(--vh, 1vh) * 100) - #{$footer-height});
   padding: 20px;
   margin: 0 auto;
 
