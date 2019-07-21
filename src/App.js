@@ -119,6 +119,7 @@ export default function App() {
             <button
               onClick={() => {
                 setShowChosen(false);
+                setShowId(0);
                 trackEvent('Button', 'click', 'Pick a different show');
               }}
             >
