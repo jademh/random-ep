@@ -9,47 +9,56 @@ import { generateRandomInt, chooseRandomArrayItem } from './helpers';
 const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
 export default function App() {
+  const [showList, setShowList] = useState([]);
   const [showChosen, setShowChosen] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [chooseRandomEp, setChooseRandomEp] = useState(false);
   const [error, setError] = useState('');
   const [showId, setShowId] = useState(0);
   const [showName, setShowName] = useState('');
   const [seasons, setSeasons] = useState([]);
   const [randomEpisodeDetails, setRandomEpisodeDetails] = useState(null);
 
-  const pickRandomEp = () => {
-    const randomSeason = chooseRandomArrayItem(seasons);
-    const randomEpisode = generateRandomInt(1, randomSeason.episode_count);
-    const fetchPath = `https://api.themoviedb.org/3/tv/${showId}/season/${
-      randomSeason.season_number
-    }/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
-    fetch(fetchPath)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        if (response.status === 401) {
-          throw new Error('UNAUTHORISED');
-        }
-        throw new Error('Request Failed');
-      })
-      .then(data => {
-        if (data.season_number !== 0) {
-          setRandomEpisodeDetails(data);
-          setLoaded(true);
-        } else {
-          throw new Error('Season Zero Error');
-        }
-      })
-      .catch(err => {
-        if (err.message === 'UNAUTHORISED') {
-          setError('An error has occured, please try again later... ');
-        } else {
-          // Pick another random episode
-          pickRandomEp();
-        }
-      });
-  };
+  useEffect(() => {
+    setChooseRandomEp(false);
+  }, [randomEpisodeDetails]);
+
+  useEffect(() => {
+    if (chooseRandomEp === true) {
+      const randomSeason = chooseRandomArrayItem(seasons);
+      const randomEpisode = generateRandomInt(1, randomSeason.episode_count);
+      const fetchPath = `https://api.themoviedb.org/3/tv/${showId}/season/${
+        randomSeason.season_number
+      }/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`;
+      fetch(fetchPath)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          if (response.status === 401) {
+            throw new Error('UNAUTHORISED');
+          }
+          throw new Error('Request Failed');
+        })
+        .then(data => {
+          if (data.season_number !== 0) {
+            setRandomEpisodeDetails(data);
+            setLoaded(true);
+            setChooseRandomEp(false);
+          } else {
+            throw new Error('Season Zero Error');
+          }
+        })
+        .catch(err => {
+          if (err.message === 'UNAUTHORISED') {
+            setError('An error has occured, please try again later... ');
+          } else {
+            // Pick another random episode
+            setChooseRandomEp(true);
+          }
+        });
+    }
+  }, [chooseRandomEp, seasons, showId]);
 
   useEffect(() => {
     if (showId !== 0) {
@@ -80,7 +89,7 @@ export default function App() {
 
   useEffect(() => {
     if (showChosen === true) {
-      pickRandomEp();
+      setChooseRandomEp(true);
     }
   }, [showChosen]);
 
@@ -92,6 +101,15 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (typeof Storage !== 'undefined') {
+      const randomEpShows = localStorage.getItem('randomEpShows');
+      const savedShows = JSON.parse(randomEpShows);
+      if (savedShows.length) {
+        setShowList(savedShows);
+      } else {
+        setShowList(shows);
+      }
+    }
     updateVh();
     window.addEventListener('resize', updateVh);
     return () => {
@@ -110,8 +128,24 @@ export default function App() {
     <div className="App">
       <ShowPicker
         active={!showChosen}
-        shows={shows}
-        onChangeShow={id => setShowId(id)}
+        shows={showList}
+        onChangeShow={(id, name) => {
+          setShowId(id);
+          if (showList.filter(show => show.id === id).length === 0) {
+            const updatedShowList = [...showList];
+            updatedShowList.unshift({ name, id });
+            if (updatedShowList.length > 10) {
+              updatedShowList.length = 10;
+            }
+            setShowList(updatedShowList);
+            if (typeof Storage !== 'undefined') {
+              localStorage.setItem(
+                'randomEpShows',
+                JSON.stringify(updatedShowList)
+              );
+            }
+          }
+        }}
       />
       {loaded && (
         <div className="results">
@@ -120,6 +154,7 @@ export default function App() {
               onClick={() => {
                 setShowChosen(false);
                 setShowId(0);
+                setChooseRandomEp(false);
                 trackEvent('Button', 'click', 'Pick a different show');
               }}
             >
@@ -130,7 +165,7 @@ export default function App() {
             </button>
             <button
               onClick={() => {
-                pickRandomEp();
+                setChooseRandomEp(true);
                 trackEvent('Button', 'click', 'Pick random episode');
               }}
             >
