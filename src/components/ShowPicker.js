@@ -42,7 +42,6 @@ export default function ShowPicker(props) {
 
   const onSuggestionSelected = (event, { suggestion }) => {
     setShowField('');
-    console.log(suggestion);
     onChangeShow(suggestion.id, suggestion.name);
     trackEvent('Search', 'select', suggestion.name);
   };
