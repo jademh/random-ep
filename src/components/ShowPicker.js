@@ -62,6 +62,8 @@ export default function ShowPicker(props) {
             value: showField,
             onChange: onShowChange,
           }}
+          highlightFirstSuggestion
+          focusInputOnSuggestionClick={false}
         />
         <div className="showPicker_list">
           {shows.map(show => {
