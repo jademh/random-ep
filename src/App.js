@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ShowPicker from './components/ShowPicker';
 import ShowDetails from './components/ShowDetails';
 import Credit from './components/Credit';
@@ -18,6 +18,7 @@ export default function App() {
   const [showName, setShowName] = useState('');
   const [seasons, setSeasons] = useState([]);
   const [randomEpisodeDetails, setRandomEpisodeDetails] = useState(null);
+  const resultContainer = useRef(null);
 
   useEffect(() => {
     setChooseRandomEp(false);
@@ -44,6 +45,7 @@ export default function App() {
           if (data.season_number !== 0) {
             setRandomEpisodeDetails(data);
             setLoaded(true);
+            resultContainer.current.focus();
             setChooseRandomEp(false);
           } else {
             throw new Error('Season Zero Error');
@@ -58,7 +60,7 @@ export default function App() {
           }
         });
     }
-  }, [chooseRandomEp, seasons, showId]);
+  }, [chooseRandomEp, resultContainer, seasons, showId]);
 
   useEffect(() => {
     if (showId !== 0) {
@@ -152,7 +154,7 @@ export default function App() {
         }}
       />
       {loaded && (
-        <div className="results">
+        <div className="results" tabIndex={-1} ref={resultContainer}>
           <div className="toolbar">
             <button
               onClick={() => {
