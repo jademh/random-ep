@@ -103,9 +103,13 @@ export default function App() {
   useEffect(() => {
     if (typeof Storage !== 'undefined') {
       const randomEpShows = localStorage.getItem('randomEpShows');
-      const savedShows = JSON.parse(randomEpShows);
-      if (savedShows.length) {
-        setShowList(savedShows);
+      if (randomEpShows) {
+        const savedShows = JSON.parse(randomEpShows);
+        if (savedShows.length) {
+          setShowList(savedShows);
+        } else {
+          setShowList(shows);
+        }
       } else {
         setShowList(shows);
       }
