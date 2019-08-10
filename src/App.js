@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import ShowPicker from './components/ShowPicker';
 import ShowDetails from './components/ShowDetails';
 import Credit from './components/Credit';
-import shows from './shows';
 import trackEvent from './tracking';
 import { generateRandomInt, chooseRandomArrayItem } from './helpers';
 
@@ -35,7 +34,7 @@ export default function App() {
       if (randomEpShows) {
         setShowList(JSON.parse(randomEpShows));
       } else {
-        setShowList(shows);
+        setShowList([]);
       }
     }
   };
