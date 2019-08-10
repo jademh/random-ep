@@ -8,10 +8,6 @@ const shows = [
     id: 105,
   },
   {
-    name: 'Friends',
-    id: 1668,
-  },
-  {
     name: 'Frasier',
     id: 3452,
   },
@@ -22,14 +18,6 @@ const shows = [
   {
     name: 'Curb Your Enthusiasm',
     id: 4546,
-  },
-  {
-    name: 'Parks and Recreation',
-    id: 8592,
-  },
-  {
-    name: 'The Office',
-    id: 2316,
   },
 ];
 
