@@ -42,8 +42,9 @@ export default function ShowPicker(props) {
 
   const onSuggestionSelected = (event, { suggestion }) => {
     setShowField('');
-    onChangeShow(suggestion.id, suggestion.name);
-    trackEvent('Search', 'select', suggestion.name);
+    const { id, name } = suggestion;
+    onChangeShow({ id, name });
+    trackEvent('Search', 'select', name);
   };
 
   return (
@@ -61,30 +62,34 @@ export default function ShowPicker(props) {
             placeholder: 'Search for a show... 📺🔎',
             value: showField,
             onChange: onShowChange,
+            tabIndex: active ? null : -1,
           }}
           highlightFirstSuggestion
           focusInputOnSuggestionClick={false}
         />
+
         <div className="showPicker_list">
           {shows.map(show => {
+            const { id, name } = show;
             return (
               <button
-                key={show.id}
-                value={show.id}
+                key={id}
+                value={id}
+                tabIndex={active ? null : -1}
                 onClick={() => {
-                  onChangeShow(show.id, show.name);
-                  trackEvent('Button', 'click', show.name);
+                  onChangeShow({ id, name });
+                  trackEvent('Button', 'click', name);
                 }}
               >
-                {show.name}
+                {name}
               </button>
             );
           })}
           <button
             onClick={() => {
-              const randomShow = chooseRandomArrayItem(shows);
-              onChangeShow(randomShow.id, randomShow.name);
-              trackEvent('Button', 'click', `Surprise Me: ${randomShow.name}`);
+              const { id, name } = chooseRandomArrayItem(shows);
+              onChangeShow({ id, name });
+              trackEvent('Button', 'click', `Surprise Me: ${name}`);
             }}
           >
             <span role="img" aria-label="crystal ball emoji">
