@@ -101,6 +101,7 @@ button {
   font-weight: normal;
   font-size: 14px;
   border-radius: 5px;
+  animation: fadein 500ms;
 }
 
 button:hover {
@@ -166,5 +167,15 @@ button:disabled {
     &:focus {
       text-decoration: none;
     }
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

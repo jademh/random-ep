@@ -8,11 +8,20 @@ const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
 export default function ShowPicker(props) {
   const [showField, setShowField] = useState('');
+  const [searchInFocus, setSearchInFocus] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState([]);
-  const { active, shows, onChangeShow } = props;
+  const { active, shows, onChangeShow, forgetShows } = props;
 
   const onShowChange = (event, { newValue }) => {
     setShowField(newValue);
+  };
+
+  const onSearchFocus = () => {
+    setSearchInFocus(true);
+  };
+
+  const onSearchBlur = () => {
+    setSearchInFocus(false);
   };
 
   const onSuggestionsFetchRequested = ({ value }) => {
@@ -51,56 +60,74 @@ export default function ShowPicker(props) {
     <section className={`showPicker ${active ? 'st-active' : ''}`}>
       <div className="showPicker_panel">
         <h1>Random Episode</h1>
-        <Autosuggest
-          suggestions={showSuggestions}
-          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={onSuggestionsClearRequested}
-          onSuggestionSelected={onSuggestionSelected}
-          getSuggestionValue={suggestion => suggestion.name}
-          renderSuggestion={suggestion => <span>{suggestion.name}</span>}
-          inputProps={{
-            placeholder: 'Search for a show... 📺🔎',
-            value: showField,
-            onChange: onShowChange,
-            tabIndex: active ? null : -1,
-          }}
-          highlightFirstSuggestion
-          focusInputOnSuggestionClick={false}
-        />
-
-        <div className="showPicker_list">
-          {shows.map(show => {
-            const { id, name } = show;
-            return (
-              <button
-                key={id}
-                value={id}
-                tabIndex={active ? null : -1}
-                onClick={() => {
-                  onChangeShow({ id, name });
-                  trackEvent('Button', 'click', name);
-                }}
-              >
-                {name}
-              </button>
-            );
-          })}
-          <button
-            onClick={() => {
-              const { id, name } = chooseRandomArrayItem(shows);
-              onChangeShow({ id, name });
-              trackEvent('Button', 'click', `Surprise Me: ${name}`);
+        <div
+          className={`autosuggest-wrapper ${searchInFocus ? 'st-active' : ''}`}
+        >
+          <Autosuggest
+            suggestions={showSuggestions}
+            onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={onSuggestionsClearRequested}
+            onSuggestionSelected={onSuggestionSelected}
+            getSuggestionValue={suggestion => suggestion.name}
+            renderSuggestion={suggestion => <span>{suggestion.name}</span>}
+            inputProps={{
+              placeholder: 'Search for a show... 🔎',
+              value: showField,
+              onChange: onShowChange,
+              tabIndex: active ? null : -1,
+              onFocus: onSearchFocus,
+              onBlur: onSearchBlur,
             }}
-          >
-            <span role="img" aria-label="crystal ball emoji">
-              🔮
-            </span>
-            <span> Surprise Me </span>
-            <span role="img" aria-label="crystal ball emoji">
-              🔮
-            </span>
-          </button>
+            highlightFirstSuggestion
+            focusInputOnSuggestionClick={false}
+          />
         </div>
+        {shows.length > 0 && (
+          <div className="showPicker_list">
+            {shows.map(show => {
+              const { id, name } = show;
+              return (
+                <button
+                  key={id}
+                  value={id}
+                  tabIndex={active ? null : -1}
+                  onClick={() => {
+                    onChangeShow({ id, name });
+                    trackEvent('Button', 'click', name);
+                  }}
+                >
+                  {name}
+                </button>
+              );
+            })}
+            <button
+              tabIndex={active ? null : -1}
+              onClick={() => {
+                const { id, name } = chooseRandomArrayItem(shows);
+                onChangeShow({ id, name });
+                trackEvent('Button', 'click', `Surprise Me: ${name}`);
+              }}
+            >
+              <span role="img" aria-label="crystal ball emoji">
+                🔮
+              </span>
+              <span> Surprise Me </span>
+              <span role="img" aria-label="crystal ball emoji">
+                🔮
+              </span>
+            </button>
+            <button
+              tabIndex={active ? null : -1}
+              class="forgetMe"
+              onClick={forgetShows}
+            >
+              <span role="img" aria-label="trash emoji">
+                🗑
+              </span>
+              <span> Forget my shows</span>
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

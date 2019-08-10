@@ -31,12 +31,7 @@ export default function App() {
     if (typeof Storage !== 'undefined') {
       const randomEpShows = localStorage.getItem(SHOW_LIST_STORAGE);
       if (randomEpShows) {
-        const savedShows = JSON.parse(randomEpShows);
-        if (savedShows.length) {
-          setShowList(savedShows);
-        } else {
-          setShowList(shows);
-        }
+        setShowList(JSON.parse(randomEpShows));
       } else {
         setShowList(shows);
       }
@@ -57,6 +52,13 @@ export default function App() {
           JSON.stringify(updatedShowList)
         );
       }
+    }
+  };
+
+  const forgetShowList = () => {
+    setShowList([]);
+    if (typeof Storage !== 'undefined') {
+      localStorage.setItem(SHOW_LIST_STORAGE, JSON.stringify([]));
     }
   };
 
@@ -151,6 +153,7 @@ export default function App() {
           active={showPickerActive}
           shows={showList}
           onChangeShow={changeShow}
+          forgetShows={forgetShowList}
         />
       </div>
       {showPickerActive === false && (
