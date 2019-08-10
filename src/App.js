@@ -68,7 +68,7 @@ export default function App() {
     const season = chooseRandomArrayItem(showInfo.seasons);
     const randomSeason = season.season_number;
     if (randomSeason === 0) {
-      pickRandomEp(showInfo);
+      return pickRandomEp(showInfo);
     }
     const randomEpisode = generateRandomInt(1, season.episode_count);
     return { randomSeason, randomEpisode };
