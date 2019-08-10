@@ -117,9 +117,12 @@ export default function ShowPicker(props) {
               </span>
             </button>
             <button
+              className="forgetMe"
               tabIndex={active ? null : -1}
-              class="forgetMe"
-              onClick={forgetShows}
+              onClick={() => {
+                forgetShows();
+                trackEvent('Button', 'click', `Forget Shows`);
+              }}
             >
               <span role="img" aria-label="trash emoji">
                 🗑

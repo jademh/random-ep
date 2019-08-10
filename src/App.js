@@ -20,6 +20,8 @@ export default function App() {
   const SHOW_LIST_STORAGE = 'randomEpShows';
   const SHOW_LIST_LENGTH_CAP = 5;
 
+  let addShowTimeout = null;
+
   const updateVh = () => {
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
     let vh = window.innerHeight * 0.01;
@@ -72,7 +74,7 @@ export default function App() {
     return { randomSeason, randomEpisode };
   };
 
-  const fetchRandomEp = ({ showId, showInfo }) => {
+  const fetchRandomEp = ({ showId, showName, showInfo }) => {
     const { randomSeason, randomEpisode } = pickRandomEp(showInfo);
     fetch(
       `https://api.themoviedb.org/3/tv/${showId}/season/${randomSeason}/episode/${randomEpisode}?api_key=${API_KEY}&language=en-US`
@@ -91,6 +93,9 @@ export default function App() {
         if (showPickerActive) {
           setShowPickerActive(false);
           resultContainer.current.focus();
+          addShowTimeout = setTimeout(() => {
+            updateShowList({ id: showId, name: showName });
+          }, 400);
         }
       })
       .catch(err => {
@@ -104,7 +109,6 @@ export default function App() {
 
   const changeShow = ({ id, name }) => {
     setShow({ id, name });
-    updateShowList({ id, name });
     fetch(
       `https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=en-US`
     )
@@ -119,7 +123,7 @@ export default function App() {
       })
       .then(data => {
         setShowInfo(data);
-        fetchRandomEp({ showId: id, showInfo: data });
+        fetchRandomEp({ showId: id, showName: name, showInfo: data });
       })
       .catch(err => {
         if (err.message === 'UNAUTHORISED') {
@@ -136,8 +140,11 @@ export default function App() {
     window.addEventListener('resize', updateVh);
     return () => {
       window.removeEventListener('resize', updateVh);
+      if (addShowTimeout) {
+        clearTimeout(addShowTimeout);
+      }
     };
-  }, []);
+  }, [addShowTimeout]);
 
   if (error !== '') {
     return (
@@ -192,7 +199,7 @@ export default function App() {
           />
         </div>
       )}
-      <Credit />
+      <Credit visible={!showPickerActive} />
     </div>
   );
 }
