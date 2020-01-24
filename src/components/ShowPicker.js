@@ -3,6 +3,7 @@ import Autosuggest from 'react-autosuggest';
 import { chooseRandomArrayItem } from '../helpers';
 import trackEvent from '../tracking';
 import '../styles/show-picker.scss';
+import DietaryRequirements from './DietaryRequirements';
 
 const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
@@ -10,7 +11,14 @@ export default function ShowPicker(props) {
   const [showField, setShowField] = useState('');
   const [searchInFocus, setSearchInFocus] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState([]);
-  const { active, shows, onChangeShow, forgetShows } = props;
+  const {
+    active,
+    shows,
+    dietaryRequirements,
+    onChangeShow,
+    onChangeDietaryRequirements,
+    forgetShows,
+  } = props;
 
   const onShowChange = (event, { newValue }) => {
     setShowField(newValue);
@@ -116,21 +124,30 @@ export default function ShowPicker(props) {
                 🔮
               </span>
             </button>
-            <button
-              className="forgetMe"
-              tabIndex={active ? null : -1}
-              onClick={() => {
-                forgetShows();
-                trackEvent('Button', 'click', `Forget Shows`);
-              }}
-            >
-              <span role="img" aria-label="trash emoji">
-                🗑
-              </span>
-              <span> Forget my shows</span>
-            </button>
+            <div>
+              <button
+                className="forgetMe"
+                tabIndex={active ? null : -1}
+                onClick={() => {
+                  forgetShows();
+                  trackEvent('Button', 'click', `Forget Shows`);
+                }}
+              >
+                <span role="img" aria-label="trash emoji">
+                  🗑
+                </span>
+                <span> Forget my shows</span>
+              </button>
+            </div>
           </div>
         )}
+        <div>
+          <h2>Snack Pairing Settings</h2>
+          <DietaryRequirements
+            dietaryRequirements={dietaryRequirements}
+            onChangeDietaryRequirements={onChangeDietaryRequirements}
+          />
+        </div>
       </div>
     </section>
   );

@@ -4,6 +4,9 @@ import ShowDetails from './components/ShowDetails';
 import Credit from './components/Credit';
 import trackEvent from './tracking';
 import { generateRandomInt, chooseRandomArrayItem } from './helpers';
+import snacks from './data/snacks';
+import drinks from './data/drinks';
+import dietaryRequirementsList from './data/dietaryRequirements';
 
 export default function App() {
   const [showList, setShowList] = useState([]);
@@ -11,6 +14,11 @@ export default function App() {
   const [showPickerActive, setShowPickerActive] = useState(true);
   const [show, setShow] = useState({ id: 0, name: '' });
   const [showInfo, setShowInfo] = useState({});
+  const [dietaryRequirements, setDietaryRequirements] = useState({});
+  const [snackList, setSnackList] = useState(snacks);
+  const [drinkList, setDrinkList] = useState(drinks);
+  const [snack, setSnack] = useState({});
+  const [drink, setDrink] = useState({});
   const [randomEpisodeDetails, setRandomEpisodeDetails] = useState(null);
   const resultContainer = useRef(null);
   const showPickerContainer = useRef(null);
@@ -18,6 +26,8 @@ export default function App() {
   const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
   const SHOW_LIST_STORAGE = 'randomEpShows';
   const SHOW_LIST_LENGTH_CAP = 5;
+
+  const DIETARY_REQ_STORAGE = 'randomEpDietaryRequirements';
 
   let addShowTimeout = null;
 
@@ -60,6 +70,17 @@ export default function App() {
     setShowList([]);
     if (typeof Storage !== 'undefined') {
       localStorage.setItem(SHOW_LIST_STORAGE, JSON.stringify([]));
+    }
+  };
+
+  const fetchDietaryRequirements = () => {
+    if (typeof Storage !== 'undefined') {
+      const userDietaryRequirements = localStorage.getItem(DIETARY_REQ_STORAGE);
+      if (userDietaryRequirements) {
+        setDietaryRequirements(JSON.parse(userDietaryRequirements));
+      } else {
+        setDietaryRequirements({});
+      }
     }
   };
 
@@ -133,8 +154,20 @@ export default function App() {
       });
   };
 
+  const changeDietaryRequirements = e => {
+    const dr = { ...dietaryRequirements };
+    const checkbox = e.target;
+    dr[checkbox.value] = checkbox.checked;
+    setDietaryRequirements(dr);
+    if (typeof Storage !== 'undefined') {
+      localStorage.setItem(DIETARY_REQ_STORAGE, JSON.stringify(dr));
+    }
+    console.log(dr);
+  };
+
   useEffect(() => {
     fetchShowList();
+    fetchDietaryRequirements();
     updateVh();
     window.addEventListener('resize', updateVh);
     return () => {
@@ -144,6 +177,25 @@ export default function App() {
       }
     };
   }, [addShowTimeout]);
+
+  useEffect(() => {
+    setSnack(chooseRandomArrayItem(snackList));
+    setDrink(chooseRandomArrayItem(drinkList));
+  }, [randomEpisodeDetails, snackList, drinkList]);
+
+  useEffect(() => {
+    let completeSnackList = snacks;
+    let completeDrinkList = drinks;
+    dietaryRequirementsList.forEach(item => {
+      if (dietaryRequirements[item.key] === true) {
+        completeSnackList = completeSnackList.filter(snack => snack[item.key]);
+        completeDrinkList = completeDrinkList.filter(drink => drink[item.key]);
+      }
+    });
+    console.log(completeSnackList, completeDrinkList);
+    setSnackList(completeSnackList);
+    setDrinkList(completeDrinkList);
+  }, [dietaryRequirements]);
 
   if (error !== '') {
     return (
@@ -159,6 +211,8 @@ export default function App() {
           active={showPickerActive}
           shows={showList}
           onChangeShow={changeShow}
+          dietaryRequirements={dietaryRequirements}
+          onChangeDietaryRequirements={changeDietaryRequirements}
           forgetShows={forgetShowList}
         />
       </div>
@@ -195,6 +249,8 @@ export default function App() {
           <ShowDetails
             showName={show.name}
             episodeDetails={randomEpisodeDetails}
+            snack={snack}
+            drink={drink}
           />
         </div>
       )}

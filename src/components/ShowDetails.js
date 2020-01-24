@@ -3,7 +3,7 @@ import React from 'react';
 let padToTwo = number => (number <= 99 ? `000${number}`.slice(-2) : number);
 
 export default function ShowDetails(props) {
-  const { showName, episodeDetails } = props;
+  const { showName, episodeDetails, snack, drink } = props;
   const { name, season_number, episode_number, overview } = episodeDetails;
   return (
     <div className="showDetails">
@@ -12,6 +12,9 @@ export default function ShowDetails(props) {
       <h3 className="showDetails_season">
         S{padToTwo(season_number)} E{padToTwo(episode_number)}
       </h3>
+      <div>
+        <strong>Pair with:</strong> {snack.name} + {drink.name}
+      </div>
       <div className="showDetails_overview">
         <p>{overview}</p>
       </div>
